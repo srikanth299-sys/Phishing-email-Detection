@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phishing Email Analyser</title>
+  <meta name="description" content="Free educational tool that analyses a suspicious email for phishing warning signs. 100% private: analysis happens in your browser, nothing is uploaded.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <svg class="brand-logo" viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">
+          <path d="M16 2 L28 6 V15 C28 23.5 23 29 16 31 C9 29 4 23.5 4 15 V6 Z" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M11 15 L14.4 18.4 L21 11.4" fill="none" stroke="#22d3ee" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24.5" cy="8" r="2.4" fill="#f87171"/>
+        </svg>
+        <span class="brand-name">Phishing <span class="brand-accent">Email</span> Analyser</span>
+      </div>
+      <nav class="header-nav" aria-label="Site">
+        <a href="#privacy">Privacy</a>
+        <a href="#samples">Try a sample</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+      <h1>Check an email for common phishing warning signs</h1>
+      <p class="hero-sub">Paste a suspicious email below and click <strong>Analyse Email</strong>. The tool looks for known social-engineering and technical red flags, explains every finding, and gives you a risk score from 0&ndash;100.</p>
+      <div class="privacy-banner" role="note">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="#34d399" stroke-width="2"/>
+          <path d="M8 10 V7 A4 4 0 0 1 16 7 V10" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="15" r="1.6" fill="#34d399"/>
+        </svg>
+        <p><strong>100% private.</strong> Your email is analysed locally inside your web browser. It is never uploaded to a server, an AI provider, an analytics service or any external API. No tracking, no telemetry, no account needed.</p>
+      </div>
+    </section>
+
+    <!-- ==================== ANALYSER ==================== -->
+    <section class="analyser-card" aria-label="Email analyser">
+      <div class="toolbar">
+        <label for="sample-select" class="field-label">Not sure where to start? Load a fully fictional demo email:</label>
+        <select id="sample-select">
+          <option value="">Choose a sample…</option>
+        </select>
+      </div>
+
+      <label for="email-input" class="field-label">Paste the email to analyse</label>
+      <textarea id="email-input" spellcheck="false" autocomplete="off"
+        placeholder="Paste the full email here, including any headers (From, To, Reply-To, Subject, Authentication-Results) if you have them.&#10;&#10;Example:&#10;From: &quot;Support&quot; &lt;support@example.com&gt;&#10;Subject: Your account has been suspended&#10;&#10;Dear Customer,&#10;..."></textarea>
+
+      <div class="actions">
+        <button id="analyse-btn" class="btn btn-primary" type="button">Analyse Email</button>
+        <button id="clear-btn" class="btn btn-ghost" type="button">Clear</button>
+      </div>
+
+      <p class="disclaimer-inline">
+        <strong>Educational triage tool.</strong> Findings are warning signs only &mdash; this tool cannot
+        definitely prove an email is or isn&rsquo;t malicious. Never click links or open attachments just to
+        test a suspicious email. Independently verify important messages via the official website, app, or a
+        known phone number of the organisation.
+      </p>
+    </section>
+
+    <noscript>
+      <p class="noscript-warning">This app needs JavaScript enabled in your browser to analyse emails. Everything runs locally on your device.</p>
+    </noscript>
+
+    <!-- ==================== RESULTS ==================== -->
+    <section id="results" class="results" hidden aria-live="polite" role="status">
+      <div class="result-summary">
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 120 66" aria-hidden="true">
+            <path class="gauge-track" d="M 10 62 A 50 50 0 0 1 110 62" fill="none" stroke-linecap="round"/>
+            <path id="gauge-arc" class="gauge-arc" d="M 10 62 A 50 50 0 0 1 110 62" fill="none" stroke-linecap="round"
+                  stroke-dasharray="157.08 157.08"/>
+          </svg>
+          <div class="gauge-value">
+            <span id="score-number" class="score-number">0</span>
+            <span class="score-max">/ 100</span>
+          </div>
+          <span id="score-label" class="score-label">risk score</span>
+        </div>
+
+        <div class="result-copy">
+          <span id="classification-badge" class="badge">—</span>
+          <h2 id="result-title">Analysis complete</h2>
+          <p id="result-explainer"></p>
+        </div>
+      </div>
+
+      <div id="auth-note" class="note" hidden></div>
+
+      <div class="results-section">
+        <h3>Warning signs found</h3>
+        <p id="findings-summary" class="muted"></p>
+        <ul id="findings-list" class="findings-list"></ul>
+        <div id="no-findings" class="no-findings" hidden>
+          <p>No strong phishing warning signs were detected in the text you pasted.</p>
+          <p class="muted">Remember: a low score does not mean an email is definitely safe. Unknown senders, unexpected messages, and unusually good&ndash;to&ndash;be&ndash;true offers still deserve caution.</p>
+        </div>
+      </div>
+
+      <div class="results-section">
+        <h3>What you should do next</h3>
+        <ul id="recommendations" class="rec-list"></ul>
+      </div>
+    </section>
+
+    <!-- ==================== SAMPLES ==================== -->
+    <section id="samples" class="sample-section">
+      <h2>Try a fictional demo email</h2>
+      <p class="muted">These six emails are completely made up. They contain no real domains and no working links &mdash; they exist purely to help you learn what each style of attack looks like.</p>
+      <div id="sample-grid" class="sample-grid"></div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS / PRIVACY ==================== -->
+    <section id="privacy" class="info-section">
+      <h2>Privacy &amp; how this works</h2>
+      <p>This application is a <strong>static website</strong>: three plain files (HTML, CSS, JavaScript) that run entirely in your browser.</p>
+      <ul class="info-list">
+        <li><strong>Local analysis:</strong> the text you paste is processed only by the JavaScript in this page, on your own device, in memory. Nothing is transmitted anywhere.</li>
+        <li><strong>No accounts, no tracking, no telemetry:</strong> there is no code that phones home, no cookies for analytics, no third-party scripts, fonts or icons.</li>
+        <li><strong>You can go offline:</strong> download the folder and open <code>index.html</code> without an internet connection &mdash; it still works.</li>
+        <li><strong>Host for free:</strong> because it is static, you can publish it free on GitHub Pages, Cloudflare Pages or Netlify Drop with no server and no database.</li>
+        <li><strong>How scoring works:</strong> every warning sign has a fixed number of points (shown next to each finding). The risk score is simply those points added up, capped at 100. Nothing hidden.</li>
+      </ul>
+
+      <div class="note">
+        <strong>Heads up about accuracy:</strong> this tool uses simple text-pattern rules that any learner can read and improve. It may occasionally miss a clever attack or over-flag a legitimate message. It is designed to
+        <em>help people think before they click</em>, not to replace a real mail-security gateway, a spam filter, or a human security team.
+      </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="site-footer">
+      <p>Phishing Email Analyser &mdash; a free, private, educational tool. Built for learning about phishing defence with plain HTML, CSS and JavaScript.</p>
+      <p class="muted">This site does not track you. It cannot send or store any email content.</p>
+    </footer>
+  </main>
+
+  <script src="examples.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+
